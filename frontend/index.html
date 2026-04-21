@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMRIT-PYQB | Previous Year Question Bank</title>
+    <meta name="description"
+        content="CMRIT Previous Year Question Bank Portal — Access question papers organized by Branch, Year, Semester, and Subject.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <div class="header__bg-glow"></div>
+        <div class="header__container">
+            <div class="header__brand">
+                <div class="header__logo">
+                    <span class="header__logo-icon">📚</span>
+                </div>
+                <div class="header__text">
+                    <h1 class="header__title">CMRIT-PYQB</h1>
+                    <p class="header__subtitle">Previous Year Question Bank Portal</p>
+                </div>
+            </div>
+            <nav class="header__nav">
+                <a href="#finder" class="header__nav-link header__nav-link--active">Find Papers</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero__container">
+            <div class="hero__content">
+                <span class="hero__badge">🎓 CMRIT-BENGALURU</span>
+                <h2 class="hero__heading">Find Your <span class="hero__heading--accent">Question Papers</span> Instantly
+                </h2>
+                <p class="hero__description">Access previous year question papers organized by branch, year, semester,
+                    and subject. Your one-stop resource for exam preparation.</p>
+            </div>
+            <div class="hero__stats">
+                <div class="hero__stat-card">
+                    <span class="hero__stat-number" id="stat-branches">—</span>
+                    <span class="hero__stat-label">Branches</span>
+                </div>
+                <div class="hero__stat-card">
+                    <span class="hero__stat-number">8</span>
+                    <span class="hero__stat-label">Semesters</span>
+                </div>
+                <div class="hero__stat-card">
+                    <span class="hero__stat-number">95</span>
+                    <span class="hero__stat-label">Papers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FINDER SECTION ===== -->
+    <main class="finder" id="finder">
+        <div class="finder__container">
+            <div class="finder__header">
+                <h2 class="finder__title">Paper Finder</h2>
+                <p class="finder__subtitle">Select your details below to browse question papers</p>
+            </div>
+
+            <div class="finder__grid">
+                <!-- Branch Card -->
+                <div class="finder__card" id="card-branch">
+                    <div class="finder__card-header">
+                        <span class="finder__card-icon">🏛️</span>
+                        <div>
+                            <h3 class="finder__card-title">Branch</h3>
+                            <p class="finder__card-desc">Select your department</p>
+                        </div>
+                    </div>
+                    <div class="finder__select-wrapper">
+                        <select id="branch" class="finder__select">
+                            <option value="">Loading branches...</option>
+                        </select>
+                        <span class="finder__select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <!-- Year Card -->
+                <div class="finder__card" id="card-year">
+                    <div class="finder__card-header">
+                        <span class="finder__card-icon">📅</span>
+                        <div>
+                            <h3 class="finder__card-title">Year</h3>
+                            <p class="finder__card-desc">Select academic year</p>
+                        </div>
+                    </div>
+                    <div class="finder__select-wrapper">
+                        <select id="year" class="finder__select">
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <span class="finder__select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <!-- Semester Card -->
+                <div class="finder__card" id="card-semester">
+                    <div class="finder__card-header">
+                        <span class="finder__card-icon">📖</span>
+                        <div>
+                            <h3 class="finder__card-title">Semester</h3>
+                            <p class="finder__card-desc">Select semester</p>
+                        </div>
+                    </div>
+                    <div class="finder__select-wrapper">
+                        <select id="semester" class="finder__select" disabled>
+                            <option value="">Select year first</option>
+                        </select>
+                        <span class="finder__select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <!-- Subject Card -->
+                <div class="finder__card" id="card-subject">
+                    <div class="finder__card-header">
+                        <span class="finder__card-icon">📝</span>
+                        <div>
+                            <h3 class="finder__card-title">Subject</h3>
+                            <p class="finder__card-desc">Select subject</p>
+                        </div>
+                    </div>
+                    <div class="finder__select-wrapper">
+                        <select id="subject" class="finder__select" disabled>
+                            <option value="">Select semester first</option>
+                        </select>
+                        <span class="finder__select-arrow">▾</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papers Results -->
+            <div class="papers" id="papers-section" style="display: none;">
+                <div class="papers__header">
+                    <h3 class="papers__title">📄 Available Question Papers</h3>
+                    <span class="papers__count" id="papers-count">0 papers found</span>
+                </div>
+                <div class="papers__list" id="papers"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state__icon">🔍</div>
+                <h3 class="empty-state__title">Select your details above</h3>
+                <p class="empty-state__desc">Choose branch, year, semester, and subject to find question papers</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section class="about" id="about">
+        <div class="about__container">
+            <h2 class="about__title">About CMRIT-PYQB</h2>
+            <div class="about__grid">
+                <div class="about__card">
+                    <span class="about__card-icon">🎯</span>
+                    <h3 class="about__card-title">Easy Access</h3>
+                    <p class="about__card-desc">Quickly find and download previous year question papers with our
+                        intuitive filtering system.</p>
+                </div>
+                <div class="about__card">
+                    <span class="about__card-icon">📂</span>
+                    <h3 class="about__card-title">Well Organized</h3>
+                    <p class="about__card-desc">Papers are categorized by branch, year, semester, and subject for
+                        effortless navigation.</p>
+                </div>
+                <div class="about__card">
+                    <span class="about__card-icon">⚡</span>
+                    <h3 class="about__card-title">Fast & Reliable</h3>
+                    <p class="about__card-desc">Built with modern technologies ensuring fast loading and reliable access
+                        to all resources.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__top">
+                <div class="footer__brand">
+                    <div class="footer__logo">
+                        <span class="footer__logo-icon">📚</span>
+                        <span class="footer__logo-text">CMRIT-PYQB</span>
+                    </div>
+                    <p class="footer__tagline">Your trusted resource for previous year question papers at CMR Institute
+                        of Technology, Bengaluru.</p>
+                </div>
+                <div class="footer__links">
+                    <h4 class="footer__links-title">Quick Links</h4>
+                    <a href="#finder" class="footer__link">Find Papers</a>
+                    <a href="#about" class="footer__link">About</a>
+                    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"
+                        class="footer__link">Back to Top ↑</a>
+                </div>
+                <div class="footer__links">
+                    <h4 class="footer__links-title">Resources</h4>
+                    <a href="https://www.cmrit.ac.in/" target="_blank" class="footer__link">CMRIT Official</a>
+                    <a href="https://www.scribd.com/home" target="_blank" class="footer__link">Scribd</a>
+                    <a href="#" onclick="document.getElementById('contact-modal').style.display='flex';return false;"
+                        class="footer__link">Contact Us</a>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copyright">&copy; 2026 CMRIT-PYQB. All rights reserved.</p>
+                <p class="footer__credit">Built with ❤️ for CMRIT students</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== CONTACT MODAL ===== -->
+    <div class="modal-overlay" id="contact-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal">
+            <button class="modal__close"
+                onclick="document.getElementById('contact-modal').style.display='none'">&times;</button>
+            <div class="modal__icon">✉️</div>
+            <h3 class="modal__title">Contact Us</h3>
+            <p class="modal__desc">Reach out to us via email</p>
+            <div class="modal__emails">
+                <a href="https://mail.google.com/mail/?view=cm&to=smruthi.aids24@cmrit.ac.in&su=CMRIT-PYQB%20Query"
+                    target="_blank" class="modal__email">
+                    <span class="modal__email-icon">📧</span>
+                    smruthi.aids24@cmrit.ac.in
+                </a>
+                <a href="https://mail.google.com/mail/?view=cm&to=soujanya.aids24@cmrit.ac.in&su=CMRIT-PYQB%20Query"
+                    target="_blank" class="modal__email">
+                    <span class="modal__email-icon">📧</span>
+                    soujanya.aids24@cmrit.ac.in
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
