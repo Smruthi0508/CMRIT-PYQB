@@ -40,8 +40,8 @@ class Subject(models.Model):
 class QuestionPaper(models.Model):
     paper_id = models.AutoField(primary_key=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    exam_year = models.IntegerField()
-    file_path = models.CharField(max_length=255)
+    exam_session = models.CharField(max_length=30)
+    file_path = models.CharField(max_length=500)
 
     class Meta:
         db_table = 'question_papers'

@@ -23,7 +23,7 @@
         <div class="header__container">
             <div class="header__brand">
                 <div class="header__logo">
-                    <span class="header__logo-icon">📚</span>
+                    <img src="../LOGO.png" alt="CMRIT-PYQB Logo" class="header__logo-img">
                 </div>
                 <div class="header__text">
                     <h1 class="header__title">CMRIT-PYQB</h1>
@@ -40,7 +40,7 @@
     <section class="hero">
         <div class="hero__container">
             <div class="hero__content">
-                <span class="hero__badge">🎓 CMRIT-BENGALURU</span>
+                <span class="hero__badge"><a href="https://www.cmrit.ac.in/" target="_blank">🎓 CMRIT-BENGALURU</a></span>
                 <h2 class="hero__heading">Find Your <span class="hero__heading--accent">Question Papers</span> Instantly
                 </h2>
                 <p class="hero__description">Access previous year question papers organized by branch, year, semester,
@@ -55,10 +55,6 @@
                     <span class="hero__stat-number">8</span>
                     <span class="hero__stat-label">Semesters</span>
                 </div>
-                <div class="hero__stat-card">
-                    <span class="hero__stat-number">95</span>
-                    <span class="hero__stat-label">Papers</span>
-                </div>
             </div>
         </div>
     </section>
@@ -72,23 +68,6 @@
             </div>
 
             <div class="finder__grid">
-                <!-- Branch Card -->
-                <div class="finder__card" id="card-branch">
-                    <div class="finder__card-header">
-                        <span class="finder__card-icon">🏛️</span>
-                        <div>
-                            <h3 class="finder__card-title">Branch</h3>
-                            <p class="finder__card-desc">Select your department</p>
-                        </div>
-                    </div>
-                    <div class="finder__select-wrapper">
-                        <select id="branch" class="finder__select">
-                            <option value="">Loading branches...</option>
-                        </select>
-                        <span class="finder__select-arrow">▾</span>
-                    </div>
-                </div>
-
                 <!-- Year Card -->
                 <div class="finder__card" id="card-year">
                     <div class="finder__card-header">
@@ -105,6 +84,23 @@
                             <option value="2">2nd Year</option>
                             <option value="3">3rd Year</option>
                             <option value="4">4th Year</option>
+                        </select>
+                        <span class="finder__select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <!-- Branch Card -->
+                <div class="finder__card" id="card-branch">
+                    <div class="finder__card-header">
+                        <span class="finder__card-icon">🏛️</span>
+                        <div>
+                            <h3 class="finder__card-title">Branch</h3>
+                            <p class="finder__card-desc">Select your department</p>
+                        </div>
+                    </div>
+                    <div class="finder__select-wrapper">
+                        <select id="branch" class="finder__select" disabled>
+                            <option value="">Select year first</option>
                         </select>
                         <span class="finder__select-arrow">▾</span>
                     </div>
@@ -160,6 +156,13 @@
                 <h3 class="empty-state__title">Select your details above</h3>
                 <p class="empty-state__desc">Choose branch, year, semester, and subject to find question papers</p>
             </div>
+
+            <!-- No Papers Found State -->
+            <div class="no-papers-found" id="no-papers-found" style="display: none;">
+                <div class="no-papers-found__icon">😕</div>
+                <h3 class="no-papers-found__title">Oops! We don't have papers for this combination yet.</h3>
+                <p class="no-papers-found__desc">Check back soon! 📚</p>
+            </div>
         </div>
     </main>
 
@@ -196,7 +199,7 @@
             <div class="footer__top">
                 <div class="footer__brand">
                     <div class="footer__logo">
-                        <span class="footer__logo-icon">📚</span>
+                        <img src="../LOGO.png" alt="CMRIT-PYQB Logo" class="footer__logo-img">
                         <span class="footer__logo-text">CMRIT-PYQB</span>
                     </div>
                     <p class="footer__tagline">Your trusted resource for previous year question papers at CMR Institute

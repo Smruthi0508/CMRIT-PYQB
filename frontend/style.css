@@ -179,15 +179,20 @@ a {
 }
 
 .header__logo {
-    width: 42px;
-    height: 42px;
+    width: 80px;
+    height: 80px;
     border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, var(--primary-600), var(--accent-500));
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: none;
+}
+
+.header__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .header__title {
@@ -294,16 +299,20 @@ a {
 
 .hero__stats {
     display: flex;
-    gap: 16px;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .hero__stat-card {
-    padding: 28px 24px;
+    padding: 32px 40px;
     border-radius: var(--radius-lg);
     background: var(--surface-card);
     border: 1px solid var(--border-subtle);
     text-align: center;
-    min-width: 110px;
+    min-width: 180px;
+    flex: 1;
+    max-width: 250px;
     backdrop-filter: blur(10px);
     transition: var(--transition-base);
 }
@@ -317,18 +326,18 @@ a {
 .hero__stat-number {
     display: block;
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .hero__stat-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--gray-500);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* ============================================
@@ -625,6 +634,42 @@ a {
     margin: 0 auto;
 }
 
+/* No Papers Found State */
+.no-papers-found {
+    text-align: center;
+    padding: 80px 24px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(59, 130, 246, 0.05));
+    border: 2px solid var(--border-accent);
+}
+
+.no-papers-found__icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.no-papers-found__title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gray-200);
+    margin-bottom: 12px;
+}
+
+.no-papers-found__desc {
+    font-size: 1rem;
+    color: var(--gray-400);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
 /* Loading spinner */
 .loading-spinner {
     display: inline-block;
@@ -727,12 +772,14 @@ a {
 .footer__logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 14px;
 }
 
-.footer__logo-icon {
-    font-size: 1.5rem;
+.footer__logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
 }
 
 .footer__logo-text {

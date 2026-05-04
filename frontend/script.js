@@ -13,10 +13,10 @@ const papersSection  = document.getElementById("papers-section");
 const papersList     = document.getElementById("papers");
 const papersCount    = document.getElementById("papers-count");
 const emptyState     = document.getElementById("empty-state");
+const noPapersFound  = document.getElementById("no-papers-found");
 
 // Stat counters
 const statBranches = document.getElementById("stat-branches");
-const statPapers   = document.getElementById("stat-papers");
 
 // ── Header scroll effect ──
 window.addEventListener("scroll", () => {
@@ -24,6 +24,18 @@ window.addEventListener("scroll", () => {
     if (header) {
         header.classList.toggle("header--scrolled", window.scrollY > 40);
     }
+});
+
+// ── Load stats on page load ──
+window.addEventListener("load", () => {
+    fetch(`${API}/branches/`)
+        .then(res => res.json())
+        .then(data => {
+            if (statBranches) statBranches.textContent = data.length;
+        })
+        .catch(() => {
+            console.error("Error loading branches count");
+        });
 });
 
 // ── Helper: reset a <select> to disabled with a placeholder ──
@@ -45,64 +57,150 @@ function setCardActive(cardId) {
 function showPapers() {
     if (papersSection) papersSection.style.display = "block";
     if (emptyState) emptyState.style.display = "none";
+    if (noPapersFound) noPapersFound.style.display = "none";
 }
 
 function hidePapers() {
     if (papersSection) papersSection.style.display = "none";
     if (emptyState) emptyState.style.display = "block";
+    if (noPapersFound) noPapersFound.style.display = "none";
+    if (papersList) papersList.innerHTML = "";
+    if (papersCount) papersCount.textContent = "0 papers found";
+}
+
+function showNoPapersFound() {
+    if (papersSection) papersSection.style.display = "none";
+    if (emptyState) emptyState.style.display = "none";
+    if (noPapersFound) noPapersFound.style.display = "block";
     if (papersList) papersList.innerHTML = "";
 }
 
 // ============================================
-// 1. Load Branches on page load
+// 1. Load Years on page load
 // ============================================
-fetch(`${API}/branches/`)
-    .then(res => res.json())
-    .then(data => {
-        let html = '<option value="">Select Branch</option>';
-        data.forEach(b => {
-            html += `<option value="${b.branch_id}">${b.branch_name} (${b.branch_code})</option>`;
-        });
-        branchSelect.innerHTML = html;
-
-        // Update stat
-        if (statBranches) statBranches.textContent = data.length;
-    })
-    .catch(() => {
-        branchSelect.innerHTML = '<option value="">Failed to load</option>';
-    });
+// Years are hardcoded in HTML, so no need to fetch
 
 // ============================================
-// 2. Year change → load Semesters
+// 1B. Year change → enable Branch selection (filtered by year)
 // ============================================
 yearSelect.addEventListener("change", function () {
     const yearId = this.value;
 
-    // Reset downstream
-    resetSelect(semesterSelect, "Loading...");
+    console.log("Year changed - yearId:", yearId);
+
+    // Reset downstream and papers count
+    resetSelect(branchSelect, "Loading...");
+    resetSelect(semesterSelect, "Select year first");
     resetSelect(subjectSelect, "Select semester first");
     hidePapers();
 
     if (!yearId) {
-        resetSelect(semesterSelect, "Select year first");
+        resetSelect(branchSelect, "Select year first");
         return;
     }
 
-    setCardActive("card-semester");
-
-    fetch(`${API}/semesters/${yearId}/`)
-        .then(res => res.json())
-        .then(data => {
-            let html = '<option value="">Select Semester</option>';
-            data.forEach(s => {
-                html += `<option value="${s.semester_id}">Semester ${s.semester_number}</option>`;
-            });
-            semesterSelect.innerHTML = html;
-            semesterSelect.disabled = false;   // ← enable the dropdown
+    // Load branches filtered by year
+    fetch(`${API}/branches-year/${yearId}/`)
+        .then(res => {
+            console.log("Branches-year response status:", res.status);
+            return res.json();
         })
-        .catch(() => {
-            resetSelect(semesterSelect, "Failed to load");
+        .then(data => {
+            console.log("Branches data:", data);
+            if (data.length === 0) {
+                resetSelect(branchSelect, "No branches available");
+                return;
+            }
+            let html = '<option value="">Select Branch</option>';
+            data.forEach(b => {
+                html += `<option value="${b.branch_id}">${b.branch_name} (${b.branch_code})</option>`;
+            });
+            branchSelect.innerHTML = html;
+            branchSelect.disabled = false;
+            setCardActive("card-branch");
+        })
+        .catch(error => {
+            console.error("Error loading branches:", error);
+            resetSelect(branchSelect, "Failed to load");
         });
+});
+
+// ============================================
+// 2. Branch change → load Semesters or Subjects (for 1st year)
+// ============================================
+branchSelect.addEventListener("change", function () {
+    const branchId = this.value;
+    const yearId = yearSelect.value;
+
+    console.log("Branch changed - branchId:", branchId, "yearId:", yearId);
+
+    // Reset downstream and papers count
+    resetSelect(semesterSelect, "Loading...");
+    resetSelect(subjectSelect, "Select semester first");
+    hidePapers();
+
+    if (!branchId || !yearId) {
+        resetSelect(semesterSelect, "Select branch first");
+        return;
+    }
+
+    // ✓ Check if 1st year (yearId === "1")
+    if (yearId === "1") {
+        console.log("Loading subjects for 1st year (combined semesters)");
+        // For 1st Year: disable semester selection and load subjects for all semesters (1 & 2)
+        semesterSelect.innerHTML = '<option value="">Not applicable for 1st Year</option>';
+        semesterSelect.disabled = true;
+
+        setCardActive("card-subject");
+
+        fetch(`${API}/subjects-year/${branchId}/${yearId}/`)
+            .then(res => {
+                console.log("Subjects-year response status:", res.status);
+                return res.json();
+            })
+            .then(data => {
+                console.log("Subjects data:", data);
+                if (data.length === 0) {
+                    resetSelect(subjectSelect, "No subjects found");
+                    showNoPapersFound();
+                    return;
+                }
+                let html = '<option value="">Select Subject</option>';
+                data.forEach(s => {
+                    html += `<option value="${s.subject_id}">${s.subject_name} (${s.subject_code})</option>`;
+                });
+                subjectSelect.innerHTML = html;
+                subjectSelect.disabled = false;
+                hidePapers();
+            })
+            .catch(error => {
+                console.error("Error loading subjects by year:", error);
+                resetSelect(subjectSelect, "Failed to load");
+            });
+    } else {
+        console.log("Loading semesters for year:", yearId);
+        // For other years: enable semester selection
+        setCardActive("card-semester");
+
+        fetch(`${API}/semesters/${yearId}/`)
+            .then(res => {
+                console.log("Semesters response status:", res.status);
+                return res.json();
+            })
+            .then(data => {
+                console.log("Semesters data:", data);
+                let html = '<option value="">Select Semester</option>';
+                data.forEach(s => {
+                    html += `<option value="${s.semester_id}">Semester ${s.semester_number}</option>`;
+                });
+                semesterSelect.innerHTML = html;
+                semesterSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error("Error loading semesters:", error);
+                resetSelect(semesterSelect, "Failed to load");
+            });
+    }
 });
 
 // ============================================
@@ -112,7 +210,9 @@ semesterSelect.addEventListener("change", function () {
     const branchId   = branchSelect.value;
     const semesterId = this.value;
 
-    // Reset downstream
+    console.log("Semester changed - branchId:", branchId, "semesterId:", semesterId);
+
+    // Reset downstream and papers count
     resetSelect(subjectSelect, "Loading...");
     hidePapers();
 
@@ -124,10 +224,15 @@ semesterSelect.addEventListener("change", function () {
     setCardActive("card-subject");
 
     fetch(`${API}/subjects/${branchId}/${semesterId}/`)
-        .then(res => res.json())
+        .then(res => {
+            console.log("Subjects response status:", res.status);
+            return res.json();
+        })
         .then(data => {
+            console.log("Subjects data:", data);
             if (data.length === 0) {
                 resetSelect(subjectSelect, "No subjects found");
+                showNoPapersFound();
                 return;
             }
             let html = '<option value="">Select Subject</option>';
@@ -135,9 +240,11 @@ semesterSelect.addEventListener("change", function () {
                 html += `<option value="${s.subject_id}">${s.subject_name} (${s.subject_code})</option>`;
             });
             subjectSelect.innerHTML = html;
-            subjectSelect.disabled = false;   // ← enable the dropdown
+            subjectSelect.disabled = false;
+            hidePapers();
         })
-        .catch(() => {
+        .catch(error => {
+            console.error("Error loading subjects:", error);
             resetSelect(subjectSelect, "Failed to load");
         });
 });
@@ -153,29 +260,41 @@ subjectSelect.addEventListener("change", function () {
         return;
     }
 
+    console.log("Fetching papers for subject_id:", subjectId);
+
     fetch(`${API}/papers/${subjectId}/`)
-        .then(res => res.json())
+        .then(res => {
+            console.log("Response status:", res.status);
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
+            console.log("Papers data received:", data);
+            
             if (data.length === 0) {
-                papersList.innerHTML = `
-                    <div style="text-align:center; padding:40px; color:#64748b;">
-                        No question papers available for this subject yet.
-                    </div>`;
-                if (papersCount) papersCount.textContent = "0 papers found";
-                showPapers();
+                const countText = "0 papers found";
+                if (papersCount) papersCount.textContent = countText;
+                showNoPapersFound();
                 return;
             }
 
-            if (papersCount) papersCount.textContent = `${data.length} paper${data.length > 1 ? 's' : ''} found`;
+            // Update papers count dynamically
+            const countText = `${data.length} paper${data.length > 1 ? 's' : ''} found`;
+            if (papersCount) papersCount.textContent = countText;
+
+            console.log(`Updating papers count: ${data.length} papers found`);
 
             let html = "";
-            data.forEach(p => {
+            data.forEach((p, index) => {
+                console.log(`Paper ${index}:`, p);
                 html += `
                 <div class="paper-item">
                     <div class="paper-item__info">
                         <div class="paper-item__icon">📄</div>
                         <div>
-                            <div class="paper-item__year">Exam Year: ${p.exam_year}</div>
+                            <div class="paper-item__year">Exam Session: ${p.exam_session || 'N/A'}</div>
                             <div class="paper-item__meta">Question Paper</div>
                         </div>
                     </div>
@@ -186,14 +305,12 @@ subjectSelect.addEventListener("change", function () {
             });
             papersList.innerHTML = html;
             showPapers();
-
-            // Update stat
-            if (statPapers) statPapers.textContent = data.length;
         })
-        .catch(() => {
+        .catch(error => {
+            console.error("Error fetching papers:", error);
             papersList.innerHTML = `
                 <div style="text-align:center; padding:40px; color:#ef4444;">
-                    Error loading papers. Please try again.
+                    Error loading papers: ${error.message}. Check browser console for details.
                 </div>`;
             showPapers();
         });
