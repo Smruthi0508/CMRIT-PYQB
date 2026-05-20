@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import Subquery
 from .models import Branch, Semester, Subject, QuestionPaper
 import json
 
@@ -27,16 +28,26 @@ def get_semesters(request, year_id):
     )
 
 def get_subjects(request, branch_id, semester_id):
-    return JsonResponse(
-        list(Subject.objects.filter(branch_id=branch_id, semester_id=semester_id).values()),
-        safe=False
-    )
-
-def get_subjects_by_year(request, branch_id, year_id):
-    """Get subjects for a specific branch and year (combines all semesters for that year)"""
+    # Only return subjects that have at least one question paper
     subjects = Subject.objects.filter(
         branch_id=branch_id,
-        semester__year_id=year_id
+        semester_id=semester_id,
+        subject_id__in=Subquery(QuestionPaper.objects.filter(
+            subject__branch_id=branch_id,
+            subject__semester_id=semester_id
+        ).values_list('subject_id', flat=True).distinct())
+    ).values()
+    return JsonResponse(list(subjects), safe=False)
+
+def get_subjects_by_year(request, branch_id, year_id):
+    """Get subjects for a specific branch and year (combines all semesters for that year) - only subjects with papers"""
+    subjects = Subject.objects.filter(
+        branch_id=branch_id,
+        semester__year_id=year_id,
+        subject_id__in=Subquery(QuestionPaper.objects.filter(
+            subject__branch_id=branch_id,
+            subject__semester__year_id=year_id
+        ).values_list('subject_id', flat=True).distinct())
     ).values('subject_id', 'subject_name', 'subject_code').distinct()
     return JsonResponse(list(subjects), safe=False)
 
